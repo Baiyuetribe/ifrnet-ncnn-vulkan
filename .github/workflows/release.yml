@@ -62,6 +62,48 @@ jobs:
   #       name: ifrnet-ncnn-vulkan
   #       path: ifrnet-ncnn-vulkan.zip
 
+  # windows:
+  #   needs: [setup]
+  #   runs-on: windows-latest
+  #   env:
+  #     PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-windows
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       submodules: 'recursive'
+  #   - name: cache-vulkansdk
+  #     id: cache-vulkansdk
+  #     uses: actions/cache@v1
+  #     with:
+  #       path: "VulkanSDK"
+  #       key: VulkanSDK-1.2.162.0-Installer
+  #   - name: vulkansdk
+  #     if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+  #     run: |
+  #       Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.2.162.0/windows/VulkanSDK-1.2.162.0-Installer.exe?Human=true -OutFile VulkanSDK-1.2.162.0-Installer.exe
+  #       7z x -aoa ./VulkanSDK-1.2.162.0-Installer.exe -oVulkanSDK
+  #       Remove-Item .\VulkanSDK\Demos, .\VulkanSDK\Samples, .\VulkanSDK\Third-Party, .\VulkanSDK\Tools, .\VulkanSDK\Tools32, .\VulkanSDK\Bin32, .\VulkanSDK\Lib32 -Recurse
+  #   - name: build
+  #     run: |
+  #       $env:VULKAN_SDK="$(pwd)/VulkanSDK"
+  #       mkdir build; cd build
+  #       cmake -A x64 ../src
+  #       cmake --build . --config Release -j 2
+  #   - name: package
+  #     run: |
+  #       mkdir ifrnet-ncnn-vulkan
+  #       Copy-Item -Verbose -Path "README.md" -Destination "ifrnet-ncnn-vulkan"
+  #       Copy-Item -Verbose -Path "LICENSE" -Destination "ifrnet-ncnn-vulkan"
+  #       Copy-Item -Verbose -Path "build\Release\${{ needs.setup.outputs.APPNAME }}.exe" -Destination "ifrnet-ncnn-vulkan"
+  #       Copy-Item -Verbose -Path "C:\windows\system32\vcomp140.dll" -Destination "ifrnet-ncnn-vulkan"
+  #       Copy-Item -Verbose -Recurse -Path "models\*" -Destination "ifrnet-ncnn-vulkan"
+  #       7z a -r ifrnet-ncnn-vulkan.zip ifrnet-ncnn-vulkan
+  #   - name: upload
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: ifrnet-ncnn-vulkan
+  #       path: ifrnet-ncnn-vulkan.zip
+
   windows:
     needs: [setup]
     runs-on: windows-latest
@@ -92,11 +134,7 @@ jobs:
     - name: package
       run: |
         mkdir ifrnet-ncnn-vulkan
-        Copy-Item -Verbose -Path "README.md" -Destination "ifrnet-ncnn-vulkan"
-        Copy-Item -Verbose -Path "LICENSE" -Destination "ifrnet-ncnn-vulkan"
-        Copy-Item -Verbose -Path "build\Release\${{ needs.setup.outputs.APPNAME }}.exe" -Destination "ifrnet-ncnn-vulkan"
-        Copy-Item -Verbose -Path "C:\windows\system32\vcomp140.dll" -Destination "ifrnet-ncnn-vulkan"
-        Copy-Item -Verbose -Recurse -Path "models\*" -Destination "ifrnet-ncnn-vulkan"
+        Copy-Item -Verbose -Recurse -Path "D:\a\ifrnet-ncnn-vulkan\ifrnet-ncnn-vulkan\*" -Destination "ifrnet-ncnn-vulkan"
         7z a -r ifrnet-ncnn-vulkan.zip ifrnet-ncnn-vulkan
     - name: upload
       uses: actions/upload-artifact@v2
