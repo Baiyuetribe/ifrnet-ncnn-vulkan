@@ -50,17 +50,17 @@ jobs:
         cmake --build . -j 2
     - name: package
       run: |
-        mkdir -p ${{ env.PACKAGENAME }}
-        cp README.md LICENSE ${{ env.PACKAGENAME }}
-        cp build/${{ needs.setup.outputs.APPNAME }} ${{ env.PACKAGENAME }}
-        strip -g ${{ env.PACKAGENAME }}/${{ needs.setup.outputs.APPNAME }}
-        cp -r models/* ${{ env.PACKAGENAME }}
-        zip -9 -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
+        mkdir -p ifrnet-ncnn-vulkan
+        cp README.md LICENSE ifrnet-ncnn-vulkan
+        cp build/${{ needs.setup.outputs.APPNAME }} ifrnet-ncnn-vulkan
+        strip -g ifrnet-ncnn-vulkan/${{ needs.setup.outputs.APPNAME }}
+        cp -r models/* ifrnet-ncnn-vulkan
+        zip -9 -r ifrnet-ncnn-vulkan.zip ifrnet-ncnn-vulkan
     - name: upload
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.PACKAGENAME }}
-        path: ${{ env.PACKAGENAME }}.zip
+        name: ifrnet-ncnn-vulkan
+        path: ifrnet-ncnn-vulkan.zip
 
   openmp-macos:
     runs-on: macos-latest
@@ -174,17 +174,17 @@ jobs:
         cmake --build . -j 3
     - name: package
       run: |
-        mkdir -p ${{ env.PACKAGENAME }}
-        cp README.md LICENSE ${{ env.PACKAGENAME }}
-        lipo -create build-x86_64/${{ needs.setup.outputs.APPNAME }} build-arm64/${{ needs.setup.outputs.APPNAME }} -o ${{ env.PACKAGENAME }}/${{ needs.setup.outputs.APPNAME }}
-        strip ${{ env.PACKAGENAME }}/${{ needs.setup.outputs.APPNAME }}
-        cp -r models/* ${{ env.PACKAGENAME }}
-        zip -9 -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
+        mkdir -p ifrnet-ncnn-vulkan
+        cp README.md LICENSE ifrnet-ncnn-vulkan
+        lipo -create build-x86_64/${{ needs.setup.outputs.APPNAME }} build-arm64/${{ needs.setup.outputs.APPNAME }} -o ifrnet-ncnn-vulkan/${{ needs.setup.outputs.APPNAME }}
+        strip ifrnet-ncnn-vulkan/${{ needs.setup.outputs.APPNAME }}
+        cp -r models/* ifrnet-ncnn-vulkan
+        zip -9 -r ifrnet-ncnn-vulkan.zip ifrnet-ncnn-vulkan
     - name: upload
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.PACKAGENAME }}
-        path: ${{ env.PACKAGENAME }}.zip
+        name: ifrnet-ncnn-vulkan
+        path: ifrnet-ncnn-vulkan.zip
 
   windows:
     needs: [setup]
@@ -215,18 +215,18 @@ jobs:
         cmake --build . --config Release -j 2
     - name: package
       run: |
-        mkdir ${{ env.PACKAGENAME }}
-        Copy-Item -Verbose -Path "README.md" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Path "LICENSE" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Path "build\Release\${{ needs.setup.outputs.APPNAME }}.exe" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Path "C:\windows\system32\vcomp140.dll" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Recurse -Path "models\*" -Destination "${{ env.PACKAGENAME }}"
-        7z a -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
+        mkdir ifrnet-ncnn-vulkan
+        Copy-Item -Verbose -Path "README.md" -Destination "ifrnet-ncnn-vulkan"
+        Copy-Item -Verbose -Path "LICENSE" -Destination "ifrnet-ncnn-vulkan"
+        Copy-Item -Verbose -Path "build\Release\${{ needs.setup.outputs.APPNAME }}.exe" -Destination "ifrnet-ncnn-vulkan"
+        Copy-Item -Verbose -Path "C:\windows\system32\vcomp140.dll" -Destination "ifrnet-ncnn-vulkan"
+        Copy-Item -Verbose -Recurse -Path "models\*" -Destination "ifrnet-ncnn-vulkan"
+        7z a -r ifrnet-ncnn-vulkan.zip ifrnet-ncnn-vulkan
     - name: upload
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.PACKAGENAME }}
-        path: ${{ env.PACKAGENAME }}.zip
+        name: ifrnet-ncnn-vulkan
+        path: ifrnet-ncnn-vulkan.zip
 
   release:
     needs: [setup, ubuntu, macos, windows]
@@ -255,8 +255,8 @@ jobs:
         PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-ubuntu
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
+        asset_path: artifacts/ifrnet-ncnn-vulkan/ifrnet-ncnn-vulkan.zip
+        asset_name: ifrnet-ncnn-vulkan.zip
         asset_content_type: application/zip
 
     - name: upload-macos
@@ -266,8 +266,8 @@ jobs:
         PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-macos
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
+        asset_path: artifacts/ifrnet-ncnn-vulkan/ifrnet-ncnn-vulkan.zip
+        asset_name: ifrnet-ncnn-vulkan.zip
         asset_content_type: application/zip
 
     - name: upload-windows
@@ -277,6 +277,6 @@ jobs:
         PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-windows
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
-        asset_name: ${{ env.PACKAGENAME }}.zip
+        asset_path: artifacts/ifrnet-ncnn-vulkan/ifrnet-ncnn-vulkan.zip
+        asset_name: ifrnet-ncnn-vulkan.zip
         asset_content_type: application/zip
